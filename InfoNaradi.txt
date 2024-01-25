@@ -1,0 +1,13 @@
+*****************************************************
+Zákazník : Oresi
+Projekt : Kuchyn
+Číslo dílce : 550015A
+CAD : C565
+Zakázka : 240000K
+Nářadí : LINKA - BBL - 0
+Revize nářadí: B
+Revize kusovníku : A
+Datum/Vytvořil: 28.8.2023 Novák
+
+****************************************************
+# informace sou smyšlene

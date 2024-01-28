@@ -10,41 +10,64 @@ with open(soubor_info_naradi, "r", encoding="utf-8") as soubor:
 
 # Funkce pro vytvoření slovníku ze souboru
 def slovnik(obsah):
-    # vyřazení specialnich znaku
     pattern = re.compile(r"\s*(.*?):\s*(.*?)\n")
-
-    # Hledání shod v textu
     shody = pattern.findall(obsah)
-
-    #vytvoří slovník a odstraní mezery za a před každym klíčem a promenou
     result_dict = {}
     for key, value in shody:
         result_dict[key.strip()] = value.strip()
     return result_dict
 
-# Funkce pro vytvoření složky na disku podle klíče "zakázka"
-def vytvor_slozku_rok(slovnik_obsahu):
-
-    #uloží pomocí klíče proměnou
+# Funkce pro vytvoření složek na disku podle klíčů "Zakázka", "Zákazník", "Projekt", "Číslo dílce" a "Nářadí"
+def vytvor_slozky(slovnik_obsahu):
     zakazka = slovnik_obsahu.get('Zakázka', '')
 
     if zakazka:
-        # Získání prvních dvou čísel z hodnoty klíče "zakázka"
         rok_cisla = zakazka[:2]
+        nova_slozka_cesta_rok = os.path.join("C:\\", f"Rok 20{rok_cisla}")
 
-        # Vytvoření cesty k nové složce
-        nova_slozka_cesta = os.path.join("C:\\", f"Rok 20{rok_cisla}")
+        if not os.path.exists(nova_slozka_cesta_rok):
+            os.makedirs(nova_slozka_cesta_rok)
+            print(f"Složka pro rok vytvořena: {nova_slozka_cesta_rok}")
 
-        # Vytvoření složky, pokud ještě neexistuje
-        if not os.path.exists(nova_slozka_cesta):
-            os.makedirs(nova_slozka_cesta)
+        zakaznik = slovnik_obsahu.get('Zákazník', '')
+        projekt = slovnik_obsahu.get('Projekt', '')
 
-        print(f"Složka vytvořena: {nova_slozka_cesta}")
+        nova_slozka_cesta_zakaznik = os.path.join(nova_slozka_cesta_rok, zakaznik)
+        nova_slozka_cesta_projekt = os.path.join(nova_slozka_cesta_zakaznik, projekt)
+
+        if not os.path.exists(nova_slozka_cesta_zakaznik):
+            os.makedirs(nova_slozka_cesta_zakaznik)
+            print(f"Složka pro zákazníka vytvořena: {nova_slozka_cesta_zakaznik}")
+
+        if not os.path.exists(nova_slozka_cesta_projekt):
+            os.makedirs(nova_slozka_cesta_projekt)
+            print(f"Složka pro projekt vytvořena: {nova_slozka_cesta_projekt}")
+
+        cislo_dilce = slovnik_obsahu.get('Číslo dílce', '')
+
+        nova_slozka_cesta_cislo_dilce = os.path.join(nova_slozka_cesta_projekt, f"{cislo_dilce}_{zakazka}")
+
+        if not os.path.exists(nova_slozka_cesta_cislo_dilce):
+            os.makedirs(nova_slozka_cesta_cislo_dilce)
+            print(f"Složka pro číslo dílce a zakázku vytvořena: {nova_slozka_cesta_cislo_dilce}")
+
+        naradi = slovnik_obsahu.get('Nářadí', '')
+
+        if naradi:
+            nova_slozka_cesta_naradi = os.path.join(nova_slozka_cesta_cislo_dilce, naradi)
+
+            if not os.path.exists(nova_slozka_cesta_naradi):
+                os.makedirs(nova_slozka_cesta_naradi)
+                print(f"Složka pro 'Nářadí' vytvořena: {nova_slozka_cesta_naradi}")
+
+        else:
+            print("Klíč 'Nářadí' není v slovníku nebo nemá hodnotu.")
+
     else:
-        print("Klíč 'zakázka' není v slovníku nebo nemá hodnotu.")
+        print("Klíč 'Zakázka' není v slovníku nebo nemá hodnotu.")
 
-
+# Vytvoření slovníku obsahu ze souboru
 slovnik_obsahu = slovnik(obsah)
-print(slovnik_obsahu)
-# Vytvoření složky rok na disku podle klíče "zakázka"
-vytvor_slozku_rok(slovnik_obsahu)
+
+# Vytvoření složek na disku podle klíčů "Zakázka", "Zákazník", "Projekt", "Číslo dílce" a "Nářadí"
+vytvor_slozky(slovnik_obsahu)

@@ -22,9 +22,11 @@ def vytvor_slozky(slovnik_obsahu):
     zakazka = slovnik_obsahu.get('Zakázka', '')
 
     if zakazka:
+        # Vytvoření složky pro rok
         rok_cisla = zakazka[:2]
         nova_slozka_cesta_rok = os.path.join("C:\\", f"Rok 20{rok_cisla}")
 
+        # Ověření jestli složka existuje
         if not os.path.exists(nova_slozka_cesta_rok):
             os.makedirs(nova_slozka_cesta_rok)
             print(f"Složka pro rok vytvořena: {nova_slozka_cesta_rok}")
@@ -32,21 +34,26 @@ def vytvor_slozky(slovnik_obsahu):
         zakaznik = slovnik_obsahu.get('Zákazník', '')
         projekt = slovnik_obsahu.get('Projekt', '')
 
+        # Vytvoření složky pro zákazníka a projekt
         nova_slozka_cesta_zakaznik = os.path.join(nova_slozka_cesta_rok, zakaznik)
         nova_slozka_cesta_projekt = os.path.join(nova_slozka_cesta_zakaznik, projekt)
 
+         # Ověření jestli složka existuje
         if not os.path.exists(nova_slozka_cesta_zakaznik):
             os.makedirs(nova_slozka_cesta_zakaznik)
             print(f"Složka pro zákazníka vytvořena: {nova_slozka_cesta_zakaznik}")
 
+         # Ověření jestli složka existuje
         if not os.path.exists(nova_slozka_cesta_projekt):
             os.makedirs(nova_slozka_cesta_projekt)
             print(f"Složka pro projekt vytvořena: {nova_slozka_cesta_projekt}")
 
         cislo_dilce = slovnik_obsahu.get('Číslo dílce', '')
 
+        # Vytvoření složky pro číslo dílce a zakázku
         nova_slozka_cesta_cislo_dilce = os.path.join(nova_slozka_cesta_projekt, f"{cislo_dilce}_{zakazka}")
 
+         # Ověření jestli složka existuje
         if not os.path.exists(nova_slozka_cesta_cislo_dilce):
             os.makedirs(nova_slozka_cesta_cislo_dilce)
             print(f"Složka pro číslo dílce a zakázku vytvořena: {nova_slozka_cesta_cislo_dilce}")
@@ -54,12 +61,20 @@ def vytvor_slozky(slovnik_obsahu):
         naradi = slovnik_obsahu.get('Nářadí', '')
 
         if naradi:
-            nova_slozka_cesta_naradi = os.path.join(nova_slozka_cesta_cislo_dilce, naradi)
+            # Extracting the word between hyphens
+            naradi_word = re.search(r'-(.*?)-', naradi)
+            if naradi_word:
+                naradi_word = naradi_word.group(1).strip()
 
-            if not os.path.exists(nova_slozka_cesta_naradi):
-                os.makedirs(nova_slozka_cesta_naradi)
-                print(f"Složka pro 'Nářadí' vytvořena: {nova_slozka_cesta_naradi}")
+                # Vytvoření složky pro 'Nářadí'
+                nova_slozka_cesta_naradi = os.path.join(nova_slozka_cesta_cislo_dilce, naradi_word)
 
+                 # Ověření jestli složka existuje
+                if not os.path.exists(nova_slozka_cesta_naradi):
+                    os.makedirs(nova_slozka_cesta_naradi)
+                    print(f"Složka pro 'Nářadí' vytvořena: {nova_slozka_cesta_naradi}")
+            else:
+                print("Nářadí neobsahuje slovo mezi - -.")
         else:
             print("Klíč 'Nářadí' není v slovníku nebo nemá hodnotu.")
 
